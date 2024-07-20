@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Define the web-tier service
+  web-tier:
+    build:
+      context: ./web-tier
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - app-tier
+    networks:
+      - app-network
+
+  # Define the app-tier service
+  app-tier:
+    build:
+      context: ./app-tier
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - DB_HOST=database
+      - DB_USER=admin
+      - DB_PWD=iabcde14
+      - DB_DATABASE=webappdb
+    networks:
+      - app-network
+    restart: always
+
+  # Define the database service
+  database:
+    platform: linux/x86_64
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword # mysql -u root -p
+      - MYSQL_DATABASE=webappdb
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=iabcde14
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "--silent", "localhost"]
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_ROOT_PASSWORD
+      interval: 10s
+      timeout: 20s
+      retries: 10
+    networks:
+      - app-network
+    restart: always
+
+volumes:
+  db-data: # This named volume will store the database data
+
+networks:
+  app-network: # This network will enable containers to communicate
+    driver: bridge

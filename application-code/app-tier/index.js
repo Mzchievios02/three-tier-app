@@ -1,3 +1,4 @@
+const mysql = require('mysql');
 const transactionService = require('./TransactionService');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,6 +8,51 @@ const fetch = require('node-fetch');
 
 const app = express();
 const port = 4000;
+
+// This is for troubleshooting to print the credentials on the terminal
+console.log('DB_HOST:', process.env.DB_HOST,);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PWD);
+console.log('DB_DATABASE:', process.env.DB_DATABASE);
+
+// Database client setup
+const db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    database: process.env.DB_DATABASE
+  });
+  
+  db.connect((err) => {
+    if (err) {
+      console.error('Error connecting to the database:', err);
+      return;
+    }
+    console.log('Connected to the MySQL database.');
+  });
+  
+  // Function to create table if it doesn't exist
+  function createTables() {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS transactions (
+        id INT NOT NULL AUTO_INCREMENT,
+        amount DECIMAL(10,2),
+        description VARCHAR(100),
+        PRIMARY KEY(id)
+      );
+    `;
+  
+    db.query(createTableQuery, (err, results) => {
+      if (err) {
+        console.error('Error creating table:', err);
+        return;
+      }
+      console.log('Table "transactions" created or already exists.');
+    });
+  }
+
+  // Run the function to create tables
+createTables();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
