@@ -26,7 +26,7 @@ services:
     environment:
       - DB_HOST=database
       - DB_USER=admin
-      - DB_PWD=iabcde
+      - DB_PWD=iabcde14
       - DB_DATABASE=webappdb
     networks:
       - app-network
@@ -42,7 +42,7 @@ services:
       - MYSQL_ROOT_PASSWORD=rootpassword # mysql -u root -p
       - MYSQL_DATABASE=webappdb
       - MYSQL_USER=admin
-      - MYSQL_PASSWORD=iabcde
+      - MYSQL_PASSWORD=iabcde14
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
