@@ -10,14 +10,14 @@ const app = express();
 const port = 4000;
 
 // This is for troubleshooting to print the credentials on the terminal
-console.log('DB_HOST:', process.env.DB_USER,);
+console.log('DB_HOST:', process.env.DB_HOST,);
 console.log('DB_USER:', process.env.DB_USER);
 console.log('DB_PASSWORD:', process.env.DB_PWD);
 console.log('DB_DATABASE:', process.env.DB_DATABASE);
 
 // Database client setup
 const db = mysql.createConnection({
-    host: process.env.DB_USER,
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PWD,
     database: process.env.DB_DATABASE
